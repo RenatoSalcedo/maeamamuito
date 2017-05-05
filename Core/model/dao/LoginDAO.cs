@@ -24,15 +24,15 @@ namespace oficial.Core.model.dao
             sbComando.AppendLine("Exec PR_VERIFY_SESSION ");
             sbComando.AppendLine(filtro.ToString());
 
-            DataSet ds = new DataSet();
-            ds = bd.retornaDadosSQL(sbComando.ToString());
-
             int session = 0;
+
+            /*DataSet ds = new DataSet();
+            ds = bd.retornaDadosSQL(sbComando.ToString()); 
 
             foreach (DataRow dr in ds.Tables[0].Rows)
             {        
                 session = int.Parse(dr["SESSION_OPEN"].ToString());
-            }
+            }*/
 
             return session;
         }
@@ -54,17 +54,17 @@ namespace oficial.Core.model.dao
             sbComando.AppendLine("Exec PR_LOGIN ");
             sbComando.AppendLine(filtro.ToString());
 
-            DataSet ds = new DataSet();
-            ds = bd.retornaDadosSQL(sbComando.ToString());
-
             User loggedUser = new User();
+
+            /*DataSet ds = new DataSet();
+            ds = bd.retornaDadosSQL(sbComando.ToString());
 
             foreach (DataRow dr in ds.Tables[0].Rows)
             {        
                 loggedUser.UserID = int.Parse(dr["USER_ID"].ToString());
                 loggedUser.UserName = dr["USER_NAME"].ToString();
                 loggedUser.UserPass = dr["USER_PASS"].ToString();
-            }
+            }*/
 
             return loggedUser;
         }
