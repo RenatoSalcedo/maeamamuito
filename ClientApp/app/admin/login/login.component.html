@@ -1,0 +1,20 @@
+<div class="loginDiv">
+    <header class="w3-container w3-center w3-padding-32"> 
+        <h1><b>Login</b></h1>
+    </header>
+
+    <form class="login-form" (ngSubmit)="f.form.valid && login()" #f="ngForm" novalidate>
+        <a href="" class="form-close bounce">
+            <i class="fa fa-times fa-lg"></i>
+        </a>
+
+        <label for="name">Name:</label>
+        <input type="text" id="name" [(ngModel)]="model.username" #username="ngModel" required/>
+        <label for="password">Password:</label>
+        <input type="password" id="password" [(ngModel)]="model.password" #password="ngModel" required/>
+        <button type="submit">Login</button>
+    </form>
+</div>
+
+<script src='js/jquery.min.js'></script>
+<script src="js/index.js"></script>
