@@ -1,3 +1,4 @@
+using System.Data;
 using System.Data.SqlClient;
 
 namespace oficial.Core.util
@@ -6,7 +7,7 @@ namespace oficial.Core.util
     {
         SqlConnection conn = new SqlConnection();
         SqlCommand command = new SqlCommand();
-        DataAdapter adapter = new SqlDataAdapter();
+        //SqlDataAdapter adapter = new SqlDataAdapter();
 
         void openConnection()
         {
@@ -19,7 +20,7 @@ namespace oficial.Core.util
             return @"Integrated Security=SSPI;Persist Security Info=False;Initial Catalog=mam;Data Source=WKSOSA0706";
         }
 
-        public DataSet retornaDadosSQL(string comandoSQL)
+        /*public DataSet retornaDadosSQL(string comandoSQL)
         {
             openConnection();
 
@@ -35,7 +36,7 @@ namespace oficial.Core.util
             closeConnection();
 
             return ds;
-        }
+        }*/
 
         public void executaComandoSQL(string comandoSQL)
         {
