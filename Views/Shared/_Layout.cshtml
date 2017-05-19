@@ -1,13 +1,14 @@
-<!DOCTYPE html>
-<html style="height: 100%;">
+﻿<!DOCTYPE html>
+<html style="height: 100%; overflow-y: scroll;">
     <head>
-        <meta charset="utf-8" />
+        <meta charset="ISO-8859-1"> />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>@ViewData["Title"] - WebApplicationBasic</title>
+        <meta http-equiv="pragma" content="no-cache" />
+        <title>@ViewData["Title"]</title>
         <base href="/" />
         <link rel="stylesheet" href="~/dist/vendor.css" asp-append-version="true" />
     </head>
-    <body>
+    <body style="height: 100%; ">
         @RenderBody()
 
         @RenderSection("scripts", required: false)

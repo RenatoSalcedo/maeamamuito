@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.SpaServices.Webpack;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using System.Data.SqlClient;
 
 namespace WebApplicationBasic
 {
@@ -28,6 +29,10 @@ namespace WebApplicationBasic
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            // Registrar a instância da interface IConfiguration com o bind do AppDatabase (appsettings.json).
+            var appDatabase = Configuration.GetSection("AppDatabase");
+            services.Configure<SqlConnectionStringBuilder>(appDatabase);
+
             // Add framework services.
             services.AddMvc();
         }
