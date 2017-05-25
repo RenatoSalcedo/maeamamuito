@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Data.SqlClient;
 using maeamamuito.Core.Interfaces;
 using Microsoft.Extensions.Options;
+using Dapper;
 
 namespace maeamamuito.Core.Repo
 {
