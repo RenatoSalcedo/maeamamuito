@@ -6,8 +6,8 @@
  * -------------------------- */
 @font-face {
   font-family: 'FontAwesome';
-  src: url('~/Fonte/fontawesome-webfont.eot?v=4.6.3');
-  src: url('~/Fonte/fontawesome-webfont.eot?#iefix&v=4.6.3') format('embedded-opentype'), url('~/Fonte/fontawesome-webfont.woff2?v=4.6.3') format('woff2'), url('~/Fonte/fontawesome-webfont.woff?v=4.6.3') format('woff'), url('~/Fonte/fontawesome-webfont.ttf?v=4.6.3') format('truetype'), url('~/Fonte/fontawesome-webfont.svg?v=4.6.3#fontawesomeregular') format('svg');
+  src: url('../fonte/fontawesome-webfont.eot?v=4.7.0');
+  src: url('../fonte/fontawesome-webfont.eot?#iefix&v=4.7.0') format('embedded-opentype'), url('../fonte/fontawesome-webfont.woff2?v=4.7.0') format('woff2'), url('../fonte/fontawesome-webfont.woff?v=4.7.0') format('woff'), url('../fonte/fontawesome-webfont.ttf?v=4.7.0') format('truetype'), url('../fonte/fontawesome-webfont.svg?v=4.7.0#fontawesomeregular') format('svg');
   font-weight: normal;
   font-style: normal;
 }
