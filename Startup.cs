@@ -33,6 +33,16 @@ namespace WebApplicationBasic
             var appDatabase = Configuration.GetSection("AppDatabase");
             services.Configure<SqlConnectionStringBuilder>(appDatabase);
 
+            // Add Authenticate Service.
+            services.AddApplicationInsightsTelemetry(Configuration); 
+ 
+            services.AddAuthorization(auth => 
+            { 
+                auth.AddPolicy("Bearer", new AuthorizationPolicyBuilder() 
+                    .AddAuthenticationSchemes(JwtBearerDefaults.AuthenticationScheme) 
+                    .RequireAuthenticatedUser().Build()); 
+            }); 
+
             // Add framework services.
             services.AddMvc();
         }
@@ -42,6 +52,57 @@ namespace WebApplicationBasic
         {
             loggerFactory.AddConsole(Configuration.GetSection("Logging"));
             loggerFactory.AddDebug();
+
+            // Authenticate Config
+            app.UseApplicationInsightsRequestTelemetry(); 
+ 
+            app.UseApplicationInsightsExceptionTelemetry(); 
+        
+            app.UseStaticFiles();
+
+            app.UseExceptionHandler(appBuilder => 
+            { 
+                appBuilder.Use(async (context, next) => 
+                { 
+                    var error = context.Features[typeof(IExceptionHandlerFeature)] as IExceptionHandlerFeature; 
+        
+                    if (error != null && error.Error is SecurityTokenExpiredException) 
+                    { 
+                        context.Response.StatusCode = 401; 
+                        context.Response.ContentType = "application/json"; 
+        
+                        await context.Response.WriteAsync(JsonConvert.SerializeObject(new RequestResult 
+                        { 
+                            State = RequestState.NotAuth, 
+                            Msg = "token expired" 
+                        })); 
+                    } 
+                    else if (error != null && error.Error != null) 
+                    { 
+                        context.Response.StatusCode = 500; 
+                        context.Response.ContentType = "application/json"; 
+                        await context.Response.WriteAsync(JsonConvert.SerializeObject(new RequestResult 
+                        { 
+                            State = RequestState.Failed, 
+                            Msg = error.Error.Message 
+                        })); 
+                    } 
+                    else await next(); 
+                }); 
+            }); 
+
+            app.UseJwtBearerAuthentication(new JwtBearerOptions() 
+            { 
+                TokenValidationParameters = new TokenValidationParameters() 
+                { 
+                    IssuerSigningKey = TokenAuthOption.Key, 
+                    ValidAudience = TokenAuthOption.Audience, 
+                    ValidIssuer = TokenAuthOption.Issuer, 
+                    ValidateIssuerSigningKey = true, 
+                    ValidateLifetime = true, 
+                    ClockSkew = TimeSpan.FromMinutes(0) 
+                } 
+            }); 
 
             if (env.IsDevelopment())
             {
@@ -54,9 +115,8 @@ namespace WebApplicationBasic
             {
                 app.UseExceptionHandler("/Home/Error");
             }
-
-            app.UseStaticFiles();
-
+            // End athenticate
+            
             app.UseMvc(routes =>
             {
                 routes.MapRoute(
