@@ -26,7 +26,7 @@ import { CartComponent } from './components/cart/cart.component';
             { path: 'gallery', component: GalleryComponent },
             { path: 'about', component: AboutComponent },
             { path: 'cart', component: CartComponent },
-            { path: '**', redirectTo: 'home' }
+            { path: '**', redirectTo: 'home' },
         ])
     ]
 })
