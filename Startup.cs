@@ -9,6 +9,11 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using System.Data.SqlClient;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Diagnostics;
+using Newtonsoft.Json;
+using CSTokenBaseAuth.Auth;
+using Microsoft.IdentityModel.Tokens;
 
 namespace WebApplicationBasic
 {
