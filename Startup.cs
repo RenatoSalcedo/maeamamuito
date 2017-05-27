@@ -1,19 +1,15 @@
 using System;
-using System.Collections.Generic;
-using System.Linq;
+using System.Data.SqlClient;
+using System.Security.Claims;
+using System.Security.Principal;
+using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.SpaServices.Webpack;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using System.Data.SqlClient;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Diagnostics;
-using Newtonsoft.Json;
-using CSTokenBaseAuth.Auth;
-using Microsoft.IdentityModel.Tokens;
+using Microsoft.Extensions.Options;
 
 namespace WebApplicationBasic
 {
@@ -26,6 +22,7 @@ namespace WebApplicationBasic
                 .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
                 .AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional: true)
                 .AddEnvironmentVariables();
+
             Configuration = builder.Build();
         }
 
@@ -38,90 +35,18 @@ namespace WebApplicationBasic
             var appDatabase = Configuration.GetSection("AppDatabase");
             services.Configure<SqlConnectionStringBuilder>(appDatabase);
 
-            // Add Authenticate Service.
-            services.AddApplicationInsightsTelemetry(Configuration); 
- 
-            services.AddAuthorization(auth => 
-            { 
-                auth.AddPolicy("Bearer", new AuthorizationPolicyBuilder() 
-                    .AddAuthenticationSchemes(JwtBearerDefaults.AuthenticationScheme) 
-                    .RequireAuthenticatedUser().Build()); 
-            }); 
-
             // Add framework services.
             services.AddMvc();
         }
 
-        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
+            // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
         {
             loggerFactory.AddConsole(Configuration.GetSection("Logging"));
             loggerFactory.AddDebug();
 
-            // Authenticate Config
-            app.UseApplicationInsightsRequestTelemetry(); 
- 
-            app.UseApplicationInsightsExceptionTelemetry(); 
-        
             app.UseStaticFiles();
 
-            app.UseExceptionHandler(appBuilder => 
-            { 
-                appBuilder.Use(async (context, next) => 
-                { 
-                    var error = context.Features[typeof(IExceptionHandlerFeature)] as IExceptionHandlerFeature; 
-        
-                    if (error != null && error.Error is SecurityTokenExpiredException) 
-                    { 
-                        context.Response.StatusCode = 401; 
-                        context.Response.ContentType = "application/json"; 
-        
-                        await context.Response.WriteAsync(JsonConvert.SerializeObject(new RequestResult 
-                        { 
-                            State = RequestState.NotAuth, 
-                            Msg = "token expired" 
-                        })); 
-                    } 
-                    else if (error != null && error.Error != null) 
-                    { 
-                        context.Response.StatusCode = 500; 
-                        context.Response.ContentType = "application/json"; 
-                        await context.Response.WriteAsync(JsonConvert.SerializeObject(new RequestResult 
-                        { 
-                            State = RequestState.Failed, 
-                            Msg = error.Error.Message 
-                        })); 
-                    } 
-                    else await next(); 
-                }); 
-            }); 
-
-            app.UseJwtBearerAuthentication(new JwtBearerOptions() 
-            { 
-                TokenValidationParameters = new TokenValidationParameters() 
-                { 
-                    IssuerSigningKey = TokenAuthOption.Key, 
-                    ValidAudience = TokenAuthOption.Audience, 
-                    ValidIssuer = TokenAuthOption.Issuer, 
-                    ValidateIssuerSigningKey = true, 
-                    ValidateLifetime = true, 
-                    ClockSkew = TimeSpan.FromMinutes(0) 
-                } 
-            }); 
-
-            if (env.IsDevelopment())
-            {
-                app.UseDeveloperExceptionPage();
-                app.UseWebpackDevMiddleware(new WebpackDevMiddlewareOptions {
-                    HotModuleReplacement = true
-                });
-            }
-            else
-            {
-                app.UseExceptionHandler("/Home/Error");
-            }
-            // End athenticate
-            
             app.UseMvc(routes =>
             {
                 routes.MapRoute(

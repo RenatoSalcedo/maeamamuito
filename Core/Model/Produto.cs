@@ -1,4 +1,4 @@
-namespace maeamamuito.Core.Model
+namespace MaeAmaMuito.Core.Model
 {
     public class Produto
     {

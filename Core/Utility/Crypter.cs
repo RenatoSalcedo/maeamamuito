@@ -3,7 +3,7 @@ using System.IO;
 using System.Security.Cryptography;
 using System.Text;
 
-namespace maeamamuito.Core.Utility
+namespace MaeAmaMuito.Core.Utility
 {
     public class Crypter
     {

@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace maeamamuito.Core.Interfaces
+namespace MaeAmaMuito.Core.Interfaces
 {
     public interface ISqlRepository<T> where T : new()
     {

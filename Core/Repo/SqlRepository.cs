@@ -1,11 +1,11 @@
 using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
-using maeamamuito.Core.Interfaces;
+using MaeAmaMuito.Core.Interfaces;
 using Microsoft.Extensions.Options;
 using Dapper;
 
-namespace maeamamuito.Core.Repo
+namespace MaeAmaMuito.Core.Repo
 {
     public class SqlRepository<T> : ISqlRepository<T>
         where T : new()
