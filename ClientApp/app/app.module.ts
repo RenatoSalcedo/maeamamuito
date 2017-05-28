@@ -9,6 +9,7 @@ import { GalleryComponent } from './components/gallery/gallery.component';
 import { AboutComponent } from './components/about/about.component';
 import { CartComponent } from './components/cart/cart.component';
 import { LoginComponent } from './components/login/login.component';
+import { CadastroComponent } from './components/cadastro/cadastro.component';
 
 @NgModule({
     bootstrap: [ AppComponent ],
@@ -20,6 +21,7 @@ import { LoginComponent } from './components/login/login.component';
         AboutComponent,
         CartComponent,
         LoginComponent,
+        CadastroComponent,
         HomeComponent
     ],
     imports: [
@@ -31,6 +33,7 @@ import { LoginComponent } from './components/login/login.component';
             { path: 'about', component: AboutComponent },
             { path: 'cart', component: CartComponent },
             { path: 'login', component: LoginComponent },
+            { path: 'admin/cadastro', component: CadastroComponent },
             { path: '**', redirectTo: 'home' },
         ])
     ]
