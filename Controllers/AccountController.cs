@@ -21,7 +21,7 @@ namespace MaeAmaMuito.Controllers
         [HttpPost("[action]")]
         public User logIn([FromBody]User user)
         {
-            user.Password = Crypter.EncryptString(user.Password);
+            user.Password = Crypter.Encrypt(user.Password);
             return _repo.LogIn(user);
         }
 
