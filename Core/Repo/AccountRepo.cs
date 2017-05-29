@@ -3,28 +3,24 @@ using System.Data.SqlClient;
 using System.Text;
 using MaeAmaMuito.Core.Utility;
 using MaeAmaMuito.Core.Model;
+using MaeAmaMuito.Core.Interfaces;
+using Microsoft.Extensions.Options;
 
 namespace MaeAmaMuito.Core.Repo
 {
-    public class AccountRepo
+    public class AccountRepo : IAccountRepository<User>
     {
-        public SqlConnection Connection
+        private readonly SqlConnectionStringBuilder _sqlConnection;
+        string _entity;
+        public AccountRepo(IOptions<SqlConnectionStringBuilder> sqlConnection) 
         {
-            get  {
-
-                ConnectionFactory connFact = new ConnectionFactory();
-                return new SqlConnection(connFact.ConnectionString.ToString());
-            }
+            _sqlConnection = sqlConnection.Value;
+            _entity = typeof(User).Name.ToUpper();
         }
 
-        public User logIn(User user)
+        User IAccountRepository<User>.LogIn(User user)
         {
             return logInVerify(user);
-        }
-
-        public void logOut(User user)
-        {
-            logOutVerify(user);
         }
 
         private User logInVerify(User user)
@@ -33,7 +29,7 @@ namespace MaeAmaMuito.Core.Repo
 
             try
             {
-                using (SqlConnection conn = Connection)
+                using (SqlConnection conn = new SqlConnection(_sqlConnection.ToString()))
                 { 
                     StringBuilder SQL = new StringBuilder();
 
@@ -63,11 +59,18 @@ namespace MaeAmaMuito.Core.Repo
             {
                 throw excecao;
             }
-        }private void logOutVerify(User user)
+        }
+
+        void IAccountRepository<User>.LogOut(User user)
+        {
+            logOutVerify(user);
+        }
+
+        private void logOutVerify(User user)
         {
             try
             {
-                using (SqlConnection conn = Connection)
+                using (SqlConnection conn = new SqlConnection(_sqlConnection.ToString()))
                 { 
                     StringBuilder SQL = new StringBuilder();
 

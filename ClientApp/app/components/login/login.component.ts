@@ -1,7 +1,8 @@
 import { Component, animate } from '@angular/core';
 import { Http, RequestOptions, Headers } from '@angular/http';
-import {Observable} from 'rxjs/Rx';
-import {Injectable} from '@angular/core';
+import { Observable } from 'rxjs/Rx';
+import { Injectable } from '@angular/core';
+import { Router } from '@angular/router';
 
 @Component({
     selector: 'login',
@@ -15,7 +16,7 @@ export class LoginComponent {
     public logued: User;
     url; headers;
     
-    constructor(private _http: Http) {
+    constructor(private _http: Http, private _router: Router) {
         this.user = new User();
     }
 
@@ -28,7 +29,8 @@ export class LoginComponent {
         this._http.post('/api/Account/logIn', bodyString, { headers: headers }).
             subscribe(
                 data => {
-                   this.logued = data.json() as User;
+                    this.logued = data.json() as User;
+                    this._router.navigate(['admin/cadastro']);
                 }, 
                 error => { 
                     console.log(JSON.stringify(error.json()));

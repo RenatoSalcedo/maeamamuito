@@ -1,5 +1,7 @@
-using MaeAmaMuito.Core.Control;
+using MaeAmaMuito.Core.Interfaces;
 using MaeAmaMuito.Core.Model;
+using MaeAmaMuito.Core.Utility;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace MaeAmaMuito.Controllers
@@ -7,18 +9,26 @@ namespace MaeAmaMuito.Controllers
     [Route("api/[controller]")]
     public class AccountController
     {
-        AccountControl accCtrl = new AccountControl();
+        private readonly IHttpContextAccessor _httpContextAccessor;
+        private readonly IAccountRepository<User> _repo;
+
+        public AccountController(IHttpContextAccessor httpContextAccessor, IAccountRepository<User> repo) 
+        {
+            _httpContextAccessor = httpContextAccessor;
+            _repo = repo;
+        }
 
         [HttpPost("[action]")]
         public User logIn([FromBody]User user)
         {
-            return accCtrl.LogIn(user);
+            user.Password = Crypter.EncryptString(user.Password);
+            return _repo.LogIn(user);
         }
 
         [HttpPost("[action]")]
         public void logOut([FromBody]User user)
         {
-            accCtrl.LogOut(user);
+            _repo.LogOut(user);
         }
     }
 }
