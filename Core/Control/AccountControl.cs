@@ -2,6 +2,7 @@ using System;
 using MaeAmaMuito.Core.Model;
 using MaeAmaMuito.Core.Repo;
 using MaeAmaMuito.Core.Utility;
+using Microsoft.AspNetCore.DataProtection;
 
 namespace MaeAmaMuito.Core.Control
 {
@@ -13,7 +14,7 @@ namespace MaeAmaMuito.Core.Control
         {
             try
             {
-                user.Password = Crypter.EncryptString(user.Password);
+                user.Password = Crypter.Encrypt(user.Password);
                 return accRpo.logIn(user);
             }
             catch (Exception ex)
@@ -26,7 +27,7 @@ namespace MaeAmaMuito.Core.Control
         {
             try
             {
-                user.Password = Crypter.EncryptString(user.Password);
+                user.Password = Crypter.Encrypt(user.Password);
                 accRpo.logOut(user);
             }
             catch (Exception ex)

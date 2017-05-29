@@ -1,5 +1,6 @@
 using MaeAmaMuito.Core.Control;
 using MaeAmaMuito.Core.Model;
+using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Mvc;
 
 namespace MaeAmaMuito.Controllers

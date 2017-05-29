@@ -2,74 +2,81 @@ using System;
 using System.IO;
 using System.Security.Cryptography;
 using System.Text;
+using Microsoft.AspNetCore.DataProtection;
 
 namespace MaeAmaMuito.Core.Utility
 {
     public class Crypter
     {
-        private static string keyCrypter = "F43547AFB6C64A6F8681E4B9801FD573"; 
+        private static readonly string PubKey = "99MAM99"; 
+        static readonly byte[] CryptoCode = new byte[] { 0x50, 0x76, 0x61, 0x6e, 0x23, 0x4d, 0x65, 0x64, 0x76, 0x65, 0x64, 0x60, 0x76 };
 
-        public static string EncryptString(string text)
-        {
-            var key = Encoding.UTF8.GetBytes(keyCrypter);
-
-            using (var aesAlg = Aes.Create())
+        public static string Encrypt(string encryptString)   
+        {  
+            byte[] clearBytes = Encoding.Unicode.GetBytes(encryptString);  
+            using(Aes encryptor = Aes.Create())
             {
-                using (var encryptor = aesAlg.CreateEncryptor(key, aesAlg.IV))
+                Rfc2898DeriveBytes pdb = new Rfc2898DeriveBytes(GetPubKey(), GetCryptoCode());
+                encryptor.Key = pdb.GetBytes(32);
+                encryptor.IV = pdb.GetBytes(16);
+
+                using (MemoryStream ms = new MemoryStream())
                 {
-                    using (var msEncrypt = new MemoryStream())
+                    using (CryptoStream cs = new CryptoStream(ms, encryptor.CreateEncryptor(), CryptoStreamMode.Write))
                     {
-                        using (var csEncrypt = new CryptoStream(msEncrypt, encryptor, CryptoStreamMode.Write))
-                        using (var swEncrypt = new StreamWriter(csEncrypt))
-                        {
-                            swEncrypt.Write(text);
-                        }
-
-                        var iv = aesAlg.IV;
-
-                        var decryptedContent = msEncrypt.ToArray();
-
-                        var result = new byte[iv.Length + decryptedContent.Length];
-
-                        Buffer.BlockCopy(iv, 0, result, 0, iv.Length);
-                        Buffer.BlockCopy(decryptedContent, 0, result, iv.Length, decryptedContent.Length);
-
-                        return Convert.ToBase64String(result);
-                    }
-                }
-            }
-        }
-
-        public static string DecryptString(string cipherText)
-        {
-            var fullCipher = Convert.FromBase64String(cipherText);
-
-            var iv = new byte[16];
-            var cipher = new byte[16];
-
-            Buffer.BlockCopy(fullCipher, 0, iv, 0, iv.Length);
-            Buffer.BlockCopy(fullCipher, iv.Length, cipher, 0, iv.Length);
-            var key = Encoding.UTF8.GetBytes(keyCrypter);
-
-            using (var aesAlg = Aes.Create())
-            {
-                using (var decryptor = aesAlg.CreateDecryptor(key, iv))
-                {
-                    string result;
-                    using (var msDecrypt = new MemoryStream(cipher))
-                    {
-                        using (var csDecrypt = new CryptoStream(msDecrypt, decryptor, CryptoStreamMode.Read))
-                        {
-                            using (var srDecrypt = new StreamReader(csDecrypt))
-                            {
-                                result = srDecrypt.ReadToEnd();
-                            }
-                        }
+                        cs.Write(clearBytes, 0, clearBytes.Length);
+                        cs.Dispose();
                     }
 
-                    return result;
+                    encryptString = Convert.ToBase64String(ms.ToArray());
                 }
             }
+
+            return encryptString;  
         }
+
+        private static byte[] GetCryptoCode()
+        {
+            return CryptoCode;
+        }
+
+        private static string GetPubKey()
+        {
+            return PubKey;
+        }
+
+        private void moveBytes(Stream fonte, Stream destino)
+        {
+            byte[] bytes = new byte[2049];
+            var contador = fonte.Read(bytes, 0, bytes.Length - 1);
+            while (0 != contador)
+            {
+                destino.Write(bytes, 0, contador);
+                contador = fonte.Read(bytes, 0, bytes.Length - 1);
+            }
+        }
+        public static string Decrypt(string cipherText)   
+        {  
+            cipherText = cipherText.Replace(" ", "+");  
+            byte[] cipherBytes = Convert.FromBase64String(cipherText);  
+            using(Aes encryptor = Aes.Create())   
+            {  
+                Rfc2898DeriveBytes pdb = new Rfc2898DeriveBytes(PubKey, CryptoCode);  
+                encryptor.Key = pdb.GetBytes(32);  
+                encryptor.IV = pdb.GetBytes(16);
+
+                using(MemoryStream ms = new MemoryStream())   
+                {  
+                    using(CryptoStream cs = new CryptoStream(ms, encryptor.CreateDecryptor(), CryptoStreamMode.Write)) {  
+                        cs.Write(cipherBytes, 0, cipherBytes.Length);  
+                        cs.Dispose();  
+                    }
+
+                    cipherText = Encoding.Unicode.GetString(ms.ToArray());  
+                }  
+            } 
+
+            return cipherText;  
+        }  
     }
 }
