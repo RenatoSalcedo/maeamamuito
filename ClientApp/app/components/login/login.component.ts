@@ -4,6 +4,8 @@ import { Observable } from 'rxjs/Rx';
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 
+import { Login } from './login';
+
 @Component({
     selector: 'login',
     templateUrl: './login.component.html',
@@ -12,12 +14,12 @@ import { Router } from '@angular/router';
 
 @Injectable()
 export class LoginComponent {
-    public user: User;
-    public logued: User;
+    public user: Login;
+    public logued: Login;
     url; headers;
     
     constructor(private _http: Http, private _router: Router) {
-        this.user = new User();
+        this.user = new Login();
     }
 
     public Logar()
@@ -29,7 +31,7 @@ export class LoginComponent {
         this._http.post('/api/Account/logIn', bodyString, { headers: headers }).
             subscribe(
                 data => {
-                    this.logued = data.json() as User;
+                    this.logued = data.json() as Login;
                     this._router.navigate(['admin/cadastro']);
                 }, 
                 error => { 
@@ -52,9 +54,4 @@ export class LoginComponent {
                     console.log(JSON.stringify(error.json()));
                 });
     }
-}
-
-class User {
-    userName: number;
-    password: string;
 }
